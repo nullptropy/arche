@@ -2,13 +2,15 @@
 
 import pygame
 
-from .state import State, StateManager
+from .trans import POP, SET, PUSH
+from .state import StateManager
 from .gameclock import GameClock
 
 pygame.init()
 
 def call_func(obj, name, *a, **k):
-    return getattr(obj, name, lambda *a, **k: None)(*a, **k)
+    if func := getattr(obj, name, None):
+        return func(*a, **k)
 
 class ContextBuilder:
     def __init__(self, title, width, height):
@@ -27,7 +29,7 @@ class ContextBuilder:
     def __str__(self):
         return str(self.config)
 
-    def __getattr__(self, name): # poggers?
+    def __getattr__(self, name): # nice?
         if name in self.config.keys():
             return lambda d: self.config.update({name: d}) or self
 
@@ -68,13 +70,14 @@ class Context:
 
             event_name = pygame.event.event_name(event.type).lower()
             transition = call_func(self.state_manager.state, f'handle_{event_name}_event', event)
- 
-            if transition:
-                {
-                    'POP' : lambda state: self.state_manager.pop(),
-                    'SET' : lambda state: self.state_manager.set(state(self)),
-                    'PUSH': lambda state: self.state_manager.push(state(self))
-                }.get(transition.trans, lambda s: None)(transition.state)
+
+            match transition:
+                case POP():
+                    self.state_manager.pop()
+                case SET(state):
+                    self.state_manager.set(state(self))
+                case PUSH(state):
+                    self.state_manager.push(state(self))
 
     def run(self, initial_state):
         self.state_manager.push(initial_state(self))

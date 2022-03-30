@@ -1,25 +1,19 @@
 # coding: utf-8
 
-class Transition:
-    def __init__(self, trans, state=None):
-        self.state = state
-        self.trans = trans
+from .state import State
+from dataclasses import dataclass
 
-    def __eq__(self, other):
-        return self.trans == other.__name__
+@dataclass
+class POP:
+    pass
 
-class POP(Transition):
-    def __init__(self):
-        super().__init__(self.__class__.__name__)
+@dataclass
+class SET:
+    state: State
 
-class SET(Transition):
-    def __init__(self, state):
-        super().__init__(self.__class__.__name__, state)
+@dataclass
+class PUSH:
+    state: State
 
-class PUSH(Transition):
-    def __init__(self, state):
-        super().__init__(self.__class__.__name__, state)
-
-class NONE(Transition):
-    def __init__(self):
-        super().__init__(self.__class__.__name__)
+# use this for static checking
+Transition = POP | SET | PUSH | None
