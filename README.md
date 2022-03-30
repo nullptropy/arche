@@ -14,8 +14,6 @@ class PausedState(State):
         if event.key in [pygame.K_p, pygame.K_ESCAPE]:
             return trans.POP()
 
-        return trans.NONE()
-
     def draw(self, ctx, interpolation):
         draw.clear(ctx, (255, 255, 255))
         draw.rect(ctx, (0, 0, 0), self.ctx.rect)
@@ -30,7 +28,7 @@ class MainState(State):
             pygame.K_p     : trans.PUSH(PausedState),
             pygame.K_s     : trans.SET(PausedState),
             pygame.K_ESCAPE: trans.POP()
-        }.get(event.key, trans.NONE())
+        }.get(event.key, None)
 
     def update(self, ctx, dt):
         if ctx.rect.x > ctx.config['size'][0]:
