@@ -5,7 +5,7 @@ description = "state management for pygame"
 authors = ["fxxf <fxxf@tutanota.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 pygame = "^2.0.0"
 
 [build-system]
